@@ -2,32 +2,65 @@
 
 
 ## Loading and preprocessing the data
-```{r echo=TRUE}
+
+```r
 unzip("activity.zip")
 data <- read.csv("activity.csv")
 ```
 ## What is mean total number of steps taken per day?
 
-```{r echo=TRUE,fig.width=20,fig.height=10}
+
+```r
 stepsByDay <-aggregate(data$steps,by=list(data$date),FUN=sum,na.rm=TRUE)
 par(las=2)
 barplot(stepsByDay$x,names.arg=stepsByDay$Group.1,axisnames=TRUE)
 ```
 
-```{r echo=TRUE}
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
+
+
+```r
 mean(stepsByDay$x)
+```
+
+```
+## [1] 9354
+```
+
+```r
 median(stepsByDay$x)
 ```
+
+```
+## [1] 10395
+```
 ## What is the average daily activity pattern?
-```{r echo=TRUE}
+
+```r
 averageDaily <- aggregate(data$steps,by=list(data$interval),FUN=mean,na.rm=TRUE)
 plot(averageDaily$Group.1,averageDaily$x,type='l',xlab="interval",ylab="average number of steps")
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
+
+```r
 averageDaily[which.max(averageDaily$x),1]
 ```
-## Imputing missing values
-```{r echo=TRUE,fig.width=20}
-sum(is.na(data))
 
+```
+## [1] 835
+```
+## Imputing missing values
+
+```r
+sum(is.na(data))
+```
+
+```
+## [1] 2304
+```
+
+```r
 for(i in 1:nrow(data))
 {
 	if (is.na(data$steps[i]))
@@ -40,12 +73,27 @@ stepsByDay <-aggregate(data$steps,by=list(data$date),FUN=sum,na.rm=TRUE)
 barplot(stepsByDay$x,names.arg=stepsByDay$Group.1,axisnames=TRUE)
 ```
 
-```{r echo=TRUE}
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+
+
+```r
 mean(stepsByDay$x)
+```
+
+```
+## [1] 10766
+```
+
+```r
 median(stepsByDay$x)
 ```
+
+```
+## [1] 10766
+```
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r echo=TRUE}
+
+```r
 library(plyr)
 # Sys.setlocale("LC_TIME","English United States")
 # weekdays(Sys.Date()+0:6)
@@ -58,7 +106,8 @@ data$conversion <- factor(mapvalues(weekdays(as.Date(data$date)),
                         c(rep("weekday", 5), rep("weekend", 2))))	
 ```
 
-```{r echo=TRUE}
+
+```r
 par(mfrow=c(2,1))
 weekday=subset(data,data$conversion=="weekday",na.rm=TRUE)
 weekend=subset(data,data$conversion=="weekend",na.rm=TRUE)
@@ -69,3 +118,5 @@ weekendstep = tapply(X = weekend$steps, INDEX = weekend$interval,FUN = mean)
 plot(x=weekday$interval[1:288],y=weekendstep,type="l",xlab="interval",
 ylab="average steps on weekend")
 ```
+
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
